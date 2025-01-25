@@ -38,7 +38,7 @@ def calculate_price(hours, voorvaarkosten, nr_people, arrangement_drinks, arrang
             break
 
     total_price = sailing_price + total_price_drinks + total_price_food + voorvaarkosten
-    return total_price, total_price_incl_btw, total_price_excl_btw
+    return total_price
     
 
 def app():
