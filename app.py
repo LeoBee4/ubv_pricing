@@ -52,7 +52,7 @@ if "clicked" not in st.session_state:
 if "company" not in st.session_state:
     st.session_state.company = False
 if "hours" not in st.session_state:
-    st.session_state.hours = 1
+    st.session_state.hours = 2
 if "voorvaarkosten" not in st.session_state:
     st.session_state.voorvaarkosten = 0
 if "nr_people" not in st.session_state:
@@ -86,7 +86,7 @@ st.write('Vul hieronder de gegevens van de vaartocht in om zo een prijs te berek
 # Toon invoervelden als er nog geen berekening is uitgevoerd
 if not st.session_state.clicked:
     company = st.checkbox('Zakelijk tarief', value=st.session_state.company)
-    hours = st.number_input('Aantal uren:', min_value=1, value=st.session_state.hours)
+    hours = st.number_input('Aantal uren:', min_value=2, value=st.session_state.hours)
     voorvaarkosten = st.number_input('Voorvaarkosten:', min_value=0, value=st.session_state.voorvaarkosten)
     nr_people = st.number_input('Aantal personen:', min_value=1, value=st.session_state.nr_people)
     night = st.checkbox('Avondtocht', value=st.session_state.night)
