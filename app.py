@@ -31,18 +31,19 @@ class CalculatePrice():
 
     def drankarrangement(self, arrangement):
         if arrangement in arrangemnt_drinks.keys():
-            return arrangemnt_drinks[arrangement] * self.nr_people * self.hours
+            return arrangemnt_drinks[arrangement]['price'] * self.nr_people * self.hours
         else:
             return 0
         
     def etenarrangement(self, arrangement):
         if arrangement in arrangemnt_food.keys():
-            return arrangemnt_food[arrangement] * self.nr_people * self.hours
+            return arrangemnt_food[arrangement]['price'] * self.nr_people * self.hours
         else:
             return 0
         
-    def calculate_prices_incld_btw(self, btw_percentage):
-        return self.total_price_excl_btw * btw_percentage
+    @staticmethod
+    def calculate_prices_incld_btw(price_excl, btw_percentage):
+        return price_excl * btw_percentage
 
 
 # ✅ 1. Zorg ervoor dat alle sessievariabelen bestaan bij het starten van de app
