@@ -2,7 +2,7 @@ import streamlit as st
 
 arrangemnt_drinks = {
     'Stëlz':  {'price': 7.50, 'btw': 21},
-    'Bier / Wijn / Fris / Stelzer':  {'price': 12.00, 'btw': 21},
+    'Bier / Wijn / Fris':  {'price': 12.00, 'btw': 21},
     'Onbeperkt drank': {'price': 11.94, 'btw': 21},
     'Kurkgeld': {'price': 1.25, 'btw': 9}
 }
@@ -21,9 +21,9 @@ class CalculatePrice():
         pass
 
     def vaarkosten(self, night=False):
-        vaarkosten = max(400, 200 * self.hours) if not night else max(450, 200 * self.hours)
-        if self.nr_people >= 20:
-            vaarkosten = vaarkosten + (self.nr_people - 19) * 10 if not night else vaarkosten + (self.nr_people - 19) * 15
+        vaarkosten = max(400, 200 * self.hours) if not night else max(450, 225 * self.hours)
+        if self.nr_people > 20:
+            vaarkosten = vaarkosten + (self.nr_people - 20) * 10 * self.hours if not night else vaarkosten + (self.nr_people - 20) * 15 * self.hours
         return vaarkosten
 
     def voorvaarkosten(self, voorvaarkosten):
