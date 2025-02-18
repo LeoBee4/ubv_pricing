@@ -1,17 +1,26 @@
 import streamlit as st
 
 arrangemnt_drinks = {
-    'Stëlz':  {'price': 7.50, 'btw': 21},
-    'Bier / Wijn / Fris':  {'price': 12.00, 'btw': 21},
+    'Stëlz':  {'price': 17.50/2, 'btw': 21},
+    'Bier / Wijn / Fris':  {'price': 11.00, 'btw': 21},
+    'Bier / Wijn / Fris EXTRA': {'price': 13, 'btw' : 21},
     'Onbeperkt drank': {'price': 11.94, 'btw': 21},
     'Kurkgeld': {'price': 1.25, 'btw': 9}
 }
 
+arrangement_extra = {
+    'Fles champagne': {'price': 60, 'btw': 21},
+    'Jeux de borreldrank': {'price': 16, 'btw': 21},
+    'Lunch (3 broodjes)': {'price': 10, 'btw': 9}
+}
+
 arrangemnt_food = {
-    'Mediterraanse borrelplank': {'price': 6.50, 'btw': 9},
+    'Mediterraanse borrelplank': {'price': 5.5, 'btw': 9, 'veelvoud': 4},
+    'Hollandse borrelplank': {'price': 3, 'btw': 9, 'veelvoud': 4},
     'Matroos': {'price': 4.94, 'btw': 9},
     'Stuurman': {'price': 6.50, 'btw': 9},
-    'Kapitein': {'price': 9.00, 'btw': 9}
+    'Kapitein': {'price': 9.00, 'btw': 9},
+    'Warme hapjes': {'price': 10, 'btw': 9}
 }
 
 class CalculatePrice():
