@@ -83,7 +83,7 @@ class CalculatePrice:
         ):
             veelvoud = arrangemnt_food[arrangement]["veelvoud"]
             rest = self.nr_people - (self.nr_people // veelvoud * veelvoud)
-            if rest > 2:
+            if rest > 2 or rest == 0:
                 nr_arrangments = self.nr_people // veelvoud + 1
             else:
                 nr_arrangments = self.nr_people // veelvoud       
