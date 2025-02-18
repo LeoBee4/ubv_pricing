@@ -1,26 +1,18 @@
 import streamlit as st
+import pandas as pd
 
 arrangemnt_drinks = {
     "Stëlz": {"price": 17.50 / 2, "btw": 21},
     "Bier / Wijn / Fris": {"price": 11.00, "btw": 21},
     "Bier / Wijn / Fris EXTRA": {"price": 13, "btw": 21},
-    "Onbeperkt drank": {"price": 11.94, "btw": 21},
-    "Kurkgeld": {"price": 1.25, "btw": 9},
-}
-
-arrangement_extra = {
-    "Fles champagne": {"price": 60, "btw": 21},
-    "Jeux de borreldrank": {"price": 16, "btw": 21},
-    "Lunch (3 broodjes)": {"price": 10, "btw": 9},
+    "Kurkgeld": {"price": 2.5, "btw": 9},
 }
 
 arrangemnt_food = {
-    "Mediterraanse borrelplank": {"price": 22, "btw": 9, "veelvoud": 4},
-    "Hollandse borrelplank": {"price": 12, "btw": 9, "veelvoud": 4},
-    "Matroos": {"price": 4.94, "btw": 9},
-    "Stuurman": {"price": 6.50, "btw": 9},
-    "Kapitein": {"price": 9.00, "btw": 9},
-    "Warme hapjes": {"price": 10, "btw": 9},
+    "Mediterraanse borrelplank": {"price": 28, "btw": 9, "veelvoud": 4},
+    "Hollandse borrelplank": {"price": 15, "btw": 9, "veelvoud": 4},
+    "Warme hapjes": {"price": 7.5, "btw": 9}, 
+    "Lunch - op basis van 2 uur": {"price": 20, "btw": 9},
 }
 
 
@@ -56,26 +48,6 @@ class CalculatePrice:
         else:
             return 0, 0
 
-    def extraarrangement(self, arrangement):
-        if arrangement == "Fles champagne":
-            return arrangement_extra[arrangement][
-                "price"
-            ], self.calculate_prices_incld_btw(
-                arrangement_extra[arrangement]["price"], arrangement_extra[arrangement]
-            )
-        if arrangement == "Jeux de borreldrank":
-            arrangement_price = arrangement_extra[arrangement]["price"] * self.nr_people
-            return arrangement_price, self.calculate_prices_incld_btw(
-                arrangement_price, arrangement_extra[arrangement]
-            )
-        if arrangement == "Lunch (3 broodjes)":
-            arrangement_price = arrangement_extra[arrangement]["price"] * self.nr_people
-            return arrangement_price, self.calculate_prices_incld_btw(
-                arrangement_price, arrangement_extra[arrangement]
-            )
-        else:
-            return 0, 0
-
     def etenarrangement(self, arrangement):
         if (
             arrangement == "Mediterraanse borrelplank"
@@ -83,7 +55,7 @@ class CalculatePrice:
         ):
             veelvoud = arrangemnt_food[arrangement]["veelvoud"]
             rest = self.nr_people - (self.nr_people // veelvoud * veelvoud)
-            if rest > 2 or rest == 0:
+            if rest >= 2 or self.nr_people // veelvoud == 0:
                 nr_arrangments = self.nr_people // veelvoud + 1
             else:
                 nr_arrangments = self.nr_people // veelvoud       
@@ -95,10 +67,15 @@ class CalculatePrice:
             return arrangement_price, self.calculate_prices_incld_btw(
                 arrangement_price, arrangemnt_food[arrangement]
             )
-        elif arrangement in arrangemnt_food.keys():
+        elif arrangement == 'Warme hapjes':
             arrangement_price = (
                 arrangemnt_food[arrangement]["price"] * self.nr_people * self.hours
             )
+            return arrangement_price, self.calculate_prices_incld_btw(
+                arrangement_price, arrangemnt_food[arrangement]
+            )
+        elif arrangement.startswith('Lunch'):
+            arrangement_price = arrangemnt_food[arrangement]["price"] * self.nr_people
             return arrangement_price, self.calculate_prices_incld_btw(
                 arrangement_price, arrangemnt_food[arrangement]
             )
@@ -113,8 +90,6 @@ class CalculatePrice:
 # ✅ 1. Zorg ervoor dat alle sessievariabelen bestaan bij het starten van de app
 if "clicked" not in st.session_state:
     st.session_state.clicked = False
-if "company" not in st.session_state:
-    st.session_state.company = False
 if "hours" not in st.session_state:
     st.session_state.hours = 2
 if "voorvaarkosten" not in st.session_state:
@@ -125,8 +100,8 @@ if "night" not in st.session_state:
     st.session_state.night = False
 if "arrangement_drinks" not in st.session_state:
     st.session_state.arrangement_drinks = "Geen"
-if "arrangement_extra" not in st.session_state:
-    st.session_state.arrangement_extra = "Geen"
+if "champagne" not in st.session_state:
+    st.session_state.champagne = 0
 if "arrangement_food" not in st.session_state:
     st.session_state.arrangement_food = "Geen"
 
@@ -134,13 +109,12 @@ if "arrangement_food" not in st.session_state:
 # Functies om sessievariabelen bij te werken
 def save_inputs():
     """Slaat de invoerwaarden op in de sessiestatus."""
-    st.session_state.company = company
     st.session_state.hours = hours
     st.session_state.voorvaarkosten = voorvaarkosten
     st.session_state.nr_people = nr_people
     st.session_state.night = night
     st.session_state.arrangement_drinks = arrangement_drinks
-    st.session_state.arrangement_extra = arrangement_extra
+    st.session_state.champagne = champagne
     st.session_state.arrangement_food = arrangement_food
     st.session_state.clicked = True  # Verberg invoervelden
 
@@ -151,11 +125,12 @@ def reset_inputs():
 
 
 st.title("Prijsberekening Utrecht Boot Verhuur")
-st.write("Vul hieronder de gegevens van de vaartocht in om zo een prijs te berekenen.")
+st.write("Vul hieronder de gegevens van de vaartocht en druk op de bereken knop.")
 
 # Toon invoervelden als er nog geen berekening is uitgevoerd
 if not st.session_state.clicked:
-    company = st.checkbox("Zakelijk tarief", value=st.session_state.company)
+    st.write("Details van vaartocht:")
+    night = st.checkbox("Avondtocht", value=st.session_state.night)
     hours = st.number_input("Aantal uren:", min_value=2, value=st.session_state.hours)
     voorvaarkosten = st.number_input(
         "Voorvaarkosten:", min_value=0, value=st.session_state.voorvaarkosten
@@ -163,20 +138,17 @@ if not st.session_state.clicked:
     nr_people = st.number_input(
         "Aantal personen:", min_value=1, value=st.session_state.nr_people
     )
-    night = st.checkbox("Avondtocht", value=st.session_state.night)
 
+    st.write("Arrangementen:")
     drinks = ["Geen"] + list(arrangemnt_drinks.keys())
     food = ["Geen"] + list(arrangemnt_food.keys())
-    extra = ["Geen"] + list(arrangement_extra.keys())
     arrangement_drinks = st.selectbox(
         "Drank arrangement:",
         drinks,
         index=drinks.index(st.session_state.arrangement_drinks),
     )
-    arrangement_extra = st.selectbox(
-        "Extra arrangement:",
-        extra,
-        index=extra.index(st.session_state.arrangement_extra),
+    champagne = st.number_input(
+        "Aantal flessen champagne:", min_value=0, value=st.session_state.champagne
     )
     arrangement_food = st.selectbox(
         "Eten arrangement:", food, index=food.index(st.session_state.arrangement_food)
@@ -185,6 +157,7 @@ if not st.session_state.clicked:
 
 # Berekening uitvoeren en tonen als de knop "Bereken prijs" is ingedrukt
 if st.session_state.clicked:
+    df = pd.DataFrame()
     priceCalculation = CalculatePrice(
         st.session_state.hours,
         st.session_state.nr_people,
@@ -196,9 +169,7 @@ if st.session_state.clicked:
     arrangement_drinks, arrangement_drinksBTW = priceCalculation.drankarrangement(
         st.session_state.arrangement_drinks
     )
-    arrangement_extra, arrangement_extraBTW = priceCalculation.extraarrangement(
-        st.session_state.arrangement_extra
-    )
+    champagne_price, champagne_priceBTW = st.session_state.champagne * 60, st.session_state.champagne * 60 * 1.21
     arrangement_food, arrangement_foodBTW = priceCalculation.etenarrangement(
         st.session_state.arrangement_food
     )
@@ -208,22 +179,49 @@ if st.session_state.clicked:
             + voorvaarkosten
             + arrangement_drinks
             + arrangement_food
-            + arrangement_extra
         ),
         vaarkostenBTW
         + voorvaarkostenBTW
         + arrangement_drinksBTW
         + arrangement_foodBTW
-        + arrangement_extraBTW,
     )
 
+    # df["Details"] = [
+    #     "Vaarkosten",
+    #     "Voorvaarkosten",
+    #     f"Drank arrangement - {st.session_state.arrangement_drinks}",
+    #     f"Champagne - {st.session_state.champagne} flessen",
+    #     f"Eten arrangement - {st.session_state.arrangement_food}",
+    #     "Totaalprijs",
+    # ]
+
+    # df["Bedrag - particulier (€)"] = [
+    #     vaarkosten,
+    #     voorvaarkosten,
+    #     arrangement_drinks,
+    #     champagne_price,
+    #     arrangement_food,
+    #     total_price,
+    # ]
+    # df["Bedrag - zakelijk (bedrijf) (€)"] = [
+    #     vaarkostenBTW,
+    #     voorvaarkostenBTW,
+    #     arrangement_drinksBTW,
+    #     champagne_priceBTW,
+    #     arrangement_foodBTW,
+    #     total_priceBTW,
+    # ]
+
+    # st.write(df)
+
+
     st.markdown(f"""
-    |             | Bedrag (€)  | Bedrag incl. BTW (€) |
-    |----------------------|-------------|---------------:|
+    |             | Bedrag - particulier (€)  | Bedrag - zakelijk (bedrijf) (€) |
+    |------------------------------------------|-------------------:|---------------------:|
     | Vaarkosten  | € {vaarkosten:,.2f} | € {vaarkostenBTW:,.2f} |
     | Voorvaarkosten   | € {voorvaarkosten:,.2f} | € {voorvaarkostenBTW:,.2f} |
     | Drank arrangement - {st.session_state.arrangement_drinks}| € {arrangement_drinks:,.2f} | € {arrangement_drinksBTW:,.2f} |
-    | Extra arrangement - {st.session_state.arrangement_extra} | € {arrangement_extra:,.2f} | € {arrangement_extraBTW:,.2f} |
+    | Champagne - {st.session_state.champagne} flessen | € {champagne_price:,.2f} | € {champagne_priceBTW:,.2f} |
     | Eten arrangement - {st.session_state.arrangement_food}| € {arrangement_food:,.2f} | € {arrangement_foodBTW:,.2f} |
     | **Totaalprijs**     | **€ {total_price:,.2f}** | **€ {total_priceBTW:,.2f}** |
     """)
