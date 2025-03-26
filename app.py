@@ -3,13 +3,13 @@ import pandas as pd
 
 arrangemnt_drinks = {
     "Stëlz": {"price": 17.50 / 2, "btw": 21},
-    "Bier / Wijn / Fris": {"price": 11.00, "btw": 21},
-    "Bier / Wijn / Fris EXTRA": {"price": 13, "btw": 21},
+    "Bier / Wijn / Fris": {"price": 9.00, "btw": 21},
+    "Bier / Wijn / Fris EXTRA": {"price": 11, "btw": 21},
     "Kurkgeld": {"price": 2.5, "btw": 9},
 }
 
 arrangemnt_food = {
-    "Mediterraanse borrelplank": {"price": 28, "btw": 9, "veelvoud": 4},
+    "Mediterraanse borrelplank": {"price": 30, "btw": 9, "veelvoud": 4},
     "Hollandse borrelplank": {"price": 15, "btw": 9, "veelvoud": 4},
     "Warme hapjes": {"price": 7.5, "btw": 9}, 
     "Lunch - op basis van 2 uur": {"price": 20, "btw": 9},
@@ -24,7 +24,7 @@ class CalculatePrice:
 
     def vaarkosten(self, night=False):
         vaarkosten = (
-            max(400, 200 * self.hours) if not night else max(450, 225 * self.hours)
+            max(450, 450 + (200 * (self.hours-2))) if not night else max(500, 500 + (200 * (self.hours-2)))
         )
         if self.nr_people > 20:
             vaarkosten = (
