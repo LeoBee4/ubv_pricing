@@ -9,9 +9,11 @@ arrangemnt_drinks = {
 }
 
 arrangemnt_food = {
-    "Mediterraanse borrelplank": {"price": 30, "btw": 9, "veelvoud": 4},
-    "Hollandse borrelplank": {"price": 15, "btw": 9, "veelvoud": 4},
-    "Warme hapjes": {"price": 7.5, "btw": 9}, 
+    # "Mediterraanse borrelplank": {"price": 30, "btw": 9, "veelvoud": 4},
+    # "Hollandse borrelplank": {"price": 15, "btw": 9, "veelvoud": 4},
+    "Mediterraanse borrelplank": {"price": 15, "btw": 9},
+    "Hollandse borrelplank": {"price": 7.5, "btw": 9},
+    "Warme hapjes": {"price": 15, "btw": 9}, 
     "Lunch - op basis van 2 uur": {"price": 20, "btw": 9},
 }
 
@@ -53,23 +55,26 @@ class CalculatePrice:
             arrangement == "Mediterraanse borrelplank"
             or arrangement == "Hollandse borrelplank"
         ):
-            veelvoud = arrangemnt_food[arrangement]["veelvoud"]
-            rest = self.nr_people - (self.nr_people // veelvoud * veelvoud)
-            if rest >= 2 or self.nr_people // veelvoud == 0:
-                nr_arrangments = self.nr_people // veelvoud + 1
-            else:
-                nr_arrangments = self.nr_people // veelvoud       
+            # veelvoud = arrangemnt_food[arrangement]["veelvoud"]
+            # rest = self.nr_people - (self.nr_people // veelvoud * veelvoud)
+            # if rest >= 2 or self.nr_people // veelvoud == 0:
+            #     nr_arrangments = self.nr_people // veelvoud + 1
+            # else:
+            #     nr_arrangments = self.nr_people // veelvoud       
+            # arrangement_price = (
+            #     arrangemnt_food[arrangement]["price"]
+            #     * nr_arrangments
+            #     * self.hours
+            # )
             arrangement_price = (
-                arrangemnt_food[arrangement]["price"]
-                * nr_arrangments
-                * self.hours
+                arrangemnt_food[arrangement]["price"] * self.nr_people
             )
             return arrangement_price, self.calculate_prices_incld_btw(
                 arrangement_price, arrangemnt_food[arrangement]
             )
         elif arrangement == 'Warme hapjes':
             arrangement_price = (
-                arrangemnt_food[arrangement]["price"] * self.nr_people * self.hours
+                arrangemnt_food[arrangement]["price"] * self.nr_people
             )
             return arrangement_price, self.calculate_prices_incld_btw(
                 arrangement_price, arrangemnt_food[arrangement]
