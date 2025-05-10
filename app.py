@@ -12,8 +12,8 @@ arrangemnt_food = {
     # "Mediterraanse borrelplank": {"price": 30, "btw": 9, "veelvoud": 4},
     # "Hollandse borrelplank": {"price": 15, "btw": 9, "veelvoud": 4},
     "Mediterraanse borrelplank": {"price": 15, "btw": 9},
-    "Hollandse borrelplank": {"price": 7.5, "btw": 9},
-    "Warme hapjes": {"price": 15, "btw": 9}, 
+    "Hollandse borrelplank": {"price": 12.5, "btw": 9},
+    "Warme hapjes": {"price": 20, "btw": 9}, 
     "Lunch - op basis van 2 uur": {"price": 20, "btw": 9},
 }
 
